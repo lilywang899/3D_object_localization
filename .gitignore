@@ -1,0 +1,11 @@
+# Build directories
+build/
+cmake-build-debug/
+cmake-build-release/
+
+# Other common build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.exe

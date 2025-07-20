@@ -1,4 +1,0 @@
-/private/l753wang/Reception/build/CMakeFiles/perception.dir
-/private/l753wang/Reception/build/CMakeFiles/udpserver.dir
-/private/l753wang/Reception/build/CMakeFiles/edit_cache.dir
-/private/l753wang/Reception/build/CMakeFiles/rebuild_cache.dir
