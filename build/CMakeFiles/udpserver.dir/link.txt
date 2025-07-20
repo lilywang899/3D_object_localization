@@ -1,0 +1,1 @@
+/usr/bin/c++  -D_GLIBCXX_USE_CXX11_ABI=1 CMakeFiles/udpserver.dir/tools/UdpServer.cpp.o -o udpserver 
