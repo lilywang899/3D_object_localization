@@ -7,7 +7,7 @@ FILE *fptr;
 UdpClient::UdpClient() {
     _isConnected = false;
     _isClosed = true;
-    imageFileName = "/private/l753wang/ultralytics/examples/YOLOv8-LibTorch-CPP-Inference/coco8-seg/images/val/000000000061.jpg";
+    imageFileName = "/home/lily/perception/000000000061.jpg";
 }
 
 UdpClient::~UdpClient() {
@@ -122,21 +122,21 @@ void UdpClient::run() {
     /*Populate send_addr structure with IP address and Port*/
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(5008);
-server_addr.sin_addr.s_addr = inet_addr("192.168.18.3");	
-//server_addr.sin_addr.s_addr = INADDR_ANY;	
+//server_addr.sin_addr.s_addr = inet_addr("192.168.18.3");
+server_addr.sin_addr.s_addr = INADDR_ANY;
     /* Disable socket blocking */
     fcntl(_sockfd, F_SETFL, O_NONBLOCK);
     // Bind to receive responses
-    struct sockaddr_in local_addr;
-    memset(&local_addr, 0, sizeof(local_addr));
-    local_addr.sin_family = AF_INET;
-    local_addr.sin_port = htons(0); // Let system assign port
-    local_addr.sin_addr.s_addr = INADDR_ANY;
-
-    if (bind(_sockfd, (struct sockaddr*)&local_addr, sizeof(local_addr)) < 0) {
-        perror("Bind failed");
-        return;
-    }
+//    struct sockaddr_in local_addr;
+//    memset(&local_addr, 0, sizeof(local_addr));
+//    local_addr.sin_family = AF_INET;
+//    local_addr.sin_port = htons(0); // Let system assign port
+//    local_addr.sin_addr.s_addr = INADDR_ANY;
+//
+//    if (bind(_sockfd, (struct sockaddr*)&local_addr, sizeof(local_addr)) < 0) {
+//        perror("Bind failed");
+//        return;
+//    }
 
     /* Initialize variables for epoll */
     struct epoll_event ev;

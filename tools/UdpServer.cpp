@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 
     char msg_recv[BUF_SIZE];
     //char flname_recv[] ="/home/gabriel_wang/share/coco8-seg/images/val/000000000049.jpg" ;
-    char flname_recv[] ="/private/l753wang/ultralytics/examples/YOLOv8-LibTorch-CPP-Inference/coco8-seg/images/val/000000000049.jpg" ;
+    char flname_recv[] ="/home/lily/perception/000000000049.jpg" ;
     char cmd_recv[10];
 
     ssize_t numRead;

@@ -234,7 +234,7 @@ int main() {
     // Device
     // Load the model (e.g. yolov8s.torchscript)
     //std::string model_path = "/path/to/yolov8s.torchscript";
-    std::string model_path = "/private/l753wang/ultralytics/examples/YOLOv8-LibTorch-CPP-Inference/build/yolov8s.torchscript";
+    std::string model_path = "/home/lily/perception/yolov8s.torchscript";
 
     yolo_model = torch::jit::load(model_path, device);
     yolo_model.eval();
