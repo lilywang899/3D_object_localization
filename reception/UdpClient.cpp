@@ -8,7 +8,7 @@ FILE *fptr;
 UdpClient::UdpClient() {
     _isConnected = false;
     _isClosed = true;
-    imageFileName = "/home/lily/perception/000000000061.jpg";
+    imageFileName = "/home/lily/perception/recevied.jpg";
 }
 
 UdpClient::~UdpClient() {

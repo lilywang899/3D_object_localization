@@ -272,7 +272,7 @@ void yolo_image_inference_local()
             //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000061.jpg");
             //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000036.jpg");
             //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000042.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000049.jpg");
+            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/test_049.jpg");
 
             std::string filename;
             std::cin >> filename;
