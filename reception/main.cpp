@@ -363,6 +363,7 @@ void yolo_image_inference (const std::string& imageFileName){
     uint32_t end = end_ms.time_since_epoch().count();
     // Show the results
 
+    int * object_center_coordinates = new int[100];
     std::cout << std::endl <<"Inference takes [ " << end-start << " ]ms,  results : [x1,y1,x2,y2], confidence level, class " << std::endl;
     for (int i = 0; i < keep.size(0); i++) {
         int x1 = keep[i][0].item().toFloat();
@@ -370,10 +371,16 @@ void yolo_image_inference (const std::string& imageFileName){
         int x2 = keep[i][2].item().toFloat();
         int y2 = keep[i][3].item().toFloat();
         float conf = keep[i][4].item().toFloat();
+        int c1 = (x1 + x2)/2;
+        int c2 = (y1 + y2)/2;
         int cls = keep[i][5].item().toInt();
-        std::cout << "  Rect: [" << x1 << "," << y1 << "," << x2 << "," << y2 << "], Center: [" <<(x2 + x1)/2 <<","<< (y2+y1)/2  <<"]  Conf: " << conf
+        std::cout << "  Rect: [" << x1 << "," << y1 << "," << x2 << "," << y2 << "], Center: [" <<c1/2 <<","<< c2/2  <<"]  Conf: " << conf
                   << "  Class: " << classes[cls] << std::endl;
+        object_center_coordinates[3*i] = c1;
+        object_center_coordinates[3*i+1] = c2;
+        object_center_coordinates[3*i+2] = -1;
     }
+    client->depth_coordinates = object_center_coordinates;
 }
 
 void yolo_inference (const unsigned char*, long unsigned int) {

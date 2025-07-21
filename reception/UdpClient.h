@@ -102,4 +102,7 @@ public:
 
     void subscribe(const client_observer_t & observer);
     bool close();
+    int * depth_coordinates;
+    void sendDepthReq();
+    void recvDepthResp();
 };
