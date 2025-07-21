@@ -1,6 +1,6 @@
 #include <fcntl.h>
 #include <sys/epoll.h>
-#include "udp_client.h"
+#include "UdpClient.h"
 #include <memory>
 
 FILE *fptr;
@@ -8,7 +8,7 @@ FILE *fptr;
 UdpClient::UdpClient() {
     _isConnected = false;
     _isClosed = true;
-    imageFileName = "/home/lily/perception/recevied.jpg";
+    imageFileName = "/home/lily/perception/reception/recevied.jpg";
 }
 
 UdpClient::~UdpClient() {
