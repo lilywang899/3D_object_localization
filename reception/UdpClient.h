@@ -84,6 +84,11 @@ private:
     };
     void dataPackageProcess(const uint8_t * msg, size_t msgSize);
 
+    union buffer {
+        frame_t img_msg;
+        int depth_list[100];
+    };
+
 public:
     UdpClient();
     ~UdpClient();

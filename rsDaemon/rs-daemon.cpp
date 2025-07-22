@@ -68,7 +68,7 @@ void send_depth_info(int type);
 
 void init_socket();
 void send_image_file(int type);
-void parse_received_msg(void* msg_buffer, int length);
+void parse_received_msg(msg_buffer* msg_recv, int length);
 
 int main(int argc, char * argv[]) 
 {

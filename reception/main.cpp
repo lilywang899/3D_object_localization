@@ -229,6 +229,7 @@ torch::Tensor scale_boxes(const std::vector<int>& img1_shape, torch::Tensor& box
     return boxes;
 }
 
+std::shared_ptr<UdpClient> client = std::make_shared<UdpClient>();
 
 int main() {
     // Device
@@ -239,8 +240,6 @@ int main() {
     yolo_model = torch::jit::load(model_path, device);
     yolo_model.eval();
     yolo_model.to(device, torch::kFloat32);
-
-    std::shared_ptr<UdpClient> client = std::make_shared<UdpClient>();
 
     // configure and register observer
     client_observer_t observer;
@@ -381,6 +380,8 @@ void yolo_image_inference (const std::string& imageFileName){
         object_center_coordinates[3*i+2] = -1;
     }
     client->depth_coordinates = object_center_coordinates;
+    client->sendDepthReq();
+
 }
 
 void yolo_inference (const unsigned char*, long unsigned int) {

@@ -55,19 +55,30 @@ void UdpClient::subscribe(const client_observer_t & observer) {
 
 void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 {
-    frame_t* frame = (frame_t*)(msg);
-    if( frame->type == TYPE::image) {
-        if(frame->ind == INDICATION::stop) {
-            fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
-            fclose(fptr);
-            publishServerMsg(imageFileName);
-            std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
+    if (msgSize % sizeof(int) == 0){
+        int depth_array[100] = {0}; // Initialize to zero
+
+        size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
+        std::memcpy(depth_array, msg, num_depths * sizeof(int));        i = 0
+        while (depth_array[i]!=0){
+            std::cout<< i << ". "<< buffer[i];
+            i+=1;
+    }
+    else{
+        frame_t* frame = (frame_t*)(msg);
+        if( frame->type == TYPE::image) {
+            if(frame->ind == INDICATION::stop) {
+                fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+                fclose(fptr);
+                publishServerMsg(imageFileName);
+                std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
+            }
+            else {
+                fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+                std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
+            }
         }
-        else {
-            fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
-            std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
-        }
-   }
+    }
 }
 /*
  * Publish incomingPacketHandler client message to observer.
@@ -89,8 +100,6 @@ void UdpClient::publishServerMsg(const uint8_t * msg, size_t msgSize) {
 void UdpClient::publishServerMsg(const std::string& imageFileName) {
     std::lock_guard<std::mutex> lock(_subscribersMtx);
     _subscriber.incomingImageHandler(imageFileName);
-    client->sendDepthReq();
-    client->recvDepthResp();
 }
 
 
@@ -234,9 +243,9 @@ void UdpClient::run() {
             {
                 if (events[i].data.fd == _sockfd)
                 {
-                    frame_t msg;
-                    memset(&msg,0,sizeof(frame_t));
-                    const size_t numOfBytesReceived = recv(_sockfd, &msg, sizeof(frame_t), 0);
+                    buffer msg;
+                    memset(&msg,0,sizeof(buffer));
+                    const size_t numOfBytesReceived = recv(_sockfd, &msg, sizeof(buffer), 0);
                     if (numOfBytesReceived < 1) {
                         std::string errorMsg;
                         if (numOfBytesReceived == 0) {
