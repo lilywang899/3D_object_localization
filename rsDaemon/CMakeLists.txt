@@ -15,4 +15,4 @@ target_link_libraries(
         rs-daemon	
         ${realsense2_LIBRARY})
 
-add_executable(udp_client tool/udp_client.cpp)
+add_executable(udp_client tools/udp_client.cpp)
