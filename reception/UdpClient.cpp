@@ -2,6 +2,7 @@
 #include <sys/epoll.h>
 #include "UdpClient.h"
 #include <memory>
+#include <cstring>
 
 FILE *fptr;
 
@@ -55,15 +56,17 @@ void UdpClient::subscribe(const client_observer_t & observer) {
 
 void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 {
-    if (msgSize % sizeof(int) == 0){
-        int depth_array[100] = {0}; // Initialize to zero
+if (msgSize % sizeof(int) == 0){
+    int depth_array[100] = {0}; // Initialize to zero
 
-        size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
-        std::memcpy(depth_array, msg, num_depths * sizeof(int));        i = 0
-        while (depth_array[i]!=0){
-            std::cout<< i << ". "<< buffer[i];
-            i+=1;
+    size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
+    std::memcpy(depth_array, msg, num_depths * sizeof(int));
+    
+    // Print all received values
+    for (size_t i = 0; i < num_depths; ++i) {
+        std::cout << i << ". " << depth_array[i] << std::endl;
     }
+}
     else{
         frame_t* frame = (frame_t*)(msg);
         if( frame->type == TYPE::image) {
@@ -123,7 +126,7 @@ void UdpClient::sendMsg() {
 }
 
 void UdpClient::sendDepthReq() {
-    if( sendto(_sockfd, (char*)&depth_coordinates, sizeof(cmd_send), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
+    if( sendto(_sockfd, (char*)&depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
     {
         std::cout << " failed to send data " << std::endl;
     }
@@ -184,7 +187,7 @@ void UdpClient::recvDepthResp() {
                         publishServerDisconnected(errorMsg);
                         return;
                     } else {
-                        i = 0
+                        i = 0;
                         while (buffer[i]!=0){
                             std::cout<< "1. "<< buffer[i];
                             i+=1;
