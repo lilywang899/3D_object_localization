@@ -50,7 +50,7 @@ union msg_buffer {
     int int_data[BUF_SIZE/sizeof(int)];
 };
 
-union msg_buffer msg_recv;
+msg_buffer * msg_recv;
 
  // Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
@@ -127,8 +127,10 @@ void parse_received_msg(msg_buffer* msg_recv, int length)
        send_image_file(0);
     }
     else {
-       center_coordinates = msg_recv->int_data;
-       array_length = sizeof(center_coordinates)/sizeof(center_coordinates[0]);
+        size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
+       int center_coordinates[num_depths];
+       std::memcpy(center_coordinates, msg_recv->int_data, num_depths * sizeof(int));
+       size_t array_length = sizeof(center_coordinates)/sizeof(center_coordinates[0]);
        for (size_t i=0; i<array_length;i+=3){
            if (center_coordinates[i] != -1){
                get_depth_from_coordinates(i,i+1);
