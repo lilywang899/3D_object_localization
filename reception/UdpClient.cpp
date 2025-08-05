@@ -56,19 +56,22 @@ void UdpClient::subscribe(const client_observer_t & observer) {
 
 void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 {
-if (msgSize % sizeof(int) == 0){
-    size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
-    int depth_array[num_depths] = {0}; // Initialize to zero
-    std::memcpy(depth_array, msg, num_depths * sizeof(int));
-    
-    // Print all received values
-    for (size_t i = 0; i < num_depths; ++i) {
-        std::cout << i << ". " << depth_array[i] << std::endl;
-    }
-}
-    else{
+//if (msgSize % sizeof(int) == 0){
+//    size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
+//    int depth_array[num_depths] = {0}; // Initialize to zero
+//    std::memcpy(depth_array, msg, num_depths * sizeof(int));
+//
+//    // Print all received values
+//    for (size_t i = 0; i < num_depths; ++i) {
+//        std::cout << i << ". " << depth_array[i] << std::endl;
+//    }
+//}
+//    else{
         frame_t* frame = (frame_t*)(msg);
-        if( frame->type == TYPE::image) {
+        if (frame->type == TYPE::command) {
+            std::cout << frame->data << std::endl;
+        }
+        elif( frame->type == TYPE::image) {
             if(frame->ind == INDICATION::stop) {
                 fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
                 fclose(fptr);
@@ -80,7 +83,7 @@ if (msgSize % sizeof(int) == 0){
                 std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
             }
         }
-    }
+    //}
 }
 /*
  * Publish incomingPacketHandler client message to observer.
@@ -177,8 +180,10 @@ void UdpClient::run() {
             {
                 if (events[i].data.fd == _sockfd)
                 {
-                    buffer msg;
-                    memset(&msg,0,sizeof(buffer));
+                    //buffer msg;
+                    frame_t msg;
+                    //memset(&msg,0,sizeof(buffer));
+                    memset(&msg,0,sizeof(frame_t));
                     const size_t numOfBytesReceived = recv(_sockfd, &msg, sizeof(buffer), 0);
                     if (numOfBytesReceived < 1) {
                         std::string errorMsg;

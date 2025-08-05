@@ -75,6 +75,14 @@ private:
         inProcess,
         stop
     };
+//    enum class MSG_TYPE {
+//        frame,
+//        depth
+//    };
+//    union buffer {
+//        frame_t img_msg;
+//        int depth_list[100];
+//    };
     struct frame_t {
         TYPE type;
         INDICATION ind;
@@ -84,10 +92,16 @@ private:
     };
     void dataPackageProcess(const uint8_t * msg, size_t msgSize);
 
-    union buffer {
-        frame_t img_msg;
-        int depth_list[100];
-    };
+//    struct udp_packet {
+//        MSG_TYPE type;
+//        buffer buffer;
+//    };
+
+      struct array_packet {
+      	  int * data;
+          size_t len;
+      };
+
 
 public:
     UdpClient();
@@ -107,7 +121,7 @@ public:
 
     void subscribe(const client_observer_t & observer);
     bool close();
-    int * depth_coordinates;
+    array_packet depth_coordinates;
     void sendDepthReq();
     void recvDepthResp();
 };
