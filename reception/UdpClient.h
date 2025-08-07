@@ -39,7 +39,10 @@ struct client_observer_t {
     std::function<void(const std::string& imageFileName)> incomingImageHandler = nullptr;
     std::function<void(const std::string & ret)> disconnectionHandler = nullptr;
 };
-
+      struct array_packet {
+      	  int * data;
+          size_t len;
+      };
 class UdpClient
 {
 private:
@@ -88,7 +91,10 @@ private:
         INDICATION ind;
         long int id;
         long int length;
-        char data[MAX_PACKET_SIZE];
+        union data_union{
+        char char_data[MAX_PACKET_SIZE];
+        int int_data[MAX_PACKET_SIZE];
+        }data;
     };
     void dataPackageProcess(const uint8_t * msg, size_t msgSize);
 
@@ -97,10 +103,7 @@ private:
 //        buffer buffer;
 //    };
 
-      struct array_packet {
-      	  int * data;
-          size_t len;
-      };
+
 
 
 public:

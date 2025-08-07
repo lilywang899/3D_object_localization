@@ -69,17 +69,17 @@ void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 //    else{
         frame_t* frame = (frame_t*)(msg);
         if (frame->type == TYPE::command) {
-            std::cout << frame->data << std::endl;
+            std::cout << frame->data.char_data << std::endl;
         }
-        elif( frame->type == TYPE::image) {
+	else if( frame->type == TYPE::image) {
             if(frame->ind == INDICATION::stop) {
-                fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+                fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
                 fclose(fptr);
                 publishServerMsg(imageFileName);
                 std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
             }
             else {
-                fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+                fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
                 std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
             }
         }
@@ -127,9 +127,11 @@ void UdpClient::sendMsg() {
     }
 }
 
-void UdpClient::sendDepthReq() {
-    if( sendto(_sockfd, (char*)&depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
-    {
+void UdpClient::sendDepthReq() 
+{
+    std::cout<<depth_coordinates.data<<std::endl;
+       if( sendto(_sockfd, &depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
+       {
         std::cout << " failed to send data " << std::endl;
     }
 }
@@ -184,7 +186,7 @@ void UdpClient::run() {
                     frame_t msg;
                     //memset(&msg,0,sizeof(buffer));
                     memset(&msg,0,sizeof(frame_t));
-                    const size_t numOfBytesReceived = recv(_sockfd, &msg, sizeof(buffer), 0);
+                    const size_t numOfBytesReceived = recv(_sockfd, &msg, sizeof(msg), 0);
                     if (numOfBytesReceived < 1) {
                         std::string errorMsg;
                         if (numOfBytesReceived == 0) {

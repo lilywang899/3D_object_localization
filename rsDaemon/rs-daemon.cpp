@@ -42,12 +42,20 @@ enum class INDICATION {
 //    frame,
 //    depth
 //};
+struct array_packet {
+  int * data;
+  size_t len;
+};
+
 struct frame_t {
     TYPE type;
     INDICATION ind;
     long int id;
     long int length;
-    char data[BUF_SIZE];
+    union data_union{
+        char char_data[BUF_SIZE];
+        int int_data[BUF_SIZE];
+    }data;
 };
 union received_msg {
     char char_data[BUF_SIZE];
@@ -64,11 +72,6 @@ union received_msg {
 //    buffer buffer;
 //};
 
-struct array_packet {
-  int * data;
-  size_t len;
-};
-
 received_msg * msg_recv = new received_msg;
  // Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
@@ -81,10 +84,10 @@ bool quit = false;
 
 void capture_color_frame();
 void metadata_to_csv(const rs2::frame& frm, const std::string& filename);
-int * get_depth_from_coordinates(int x_coor, int y_coor);
+int * get_depth_from_coordinates(array_packet * center_coordinates);
 
 void init_socket();
-void send_depth_data(int * center_coordinates);
+void send_depth_data(array_packet * center_coordinates);
 void send_image_file(int type);
 void parse_received_msg(received_msg* msg_recv, int length);
 
@@ -145,10 +148,10 @@ void parse_received_msg(received_msg* msg_recv, int length)
        send_image_file(0);
     }
     else {
-       array_packet depth_req;
-       memset(depth_req, 0, sizeof(depth_req);
-       memcpy(depth_req, msg_recv->int_data, msg_recv->int_data.len);
-       send_depth_data(&depth_req);
+       array_packet * depth_req = &msg_recv->int_data;
+//       memset(depth_req, 0, sizeof(depth_req));
+//       memcpy(depth_req, msg_recv->int_data, msg_recv->int_data.len);
+       send_depth_data(depth_req);
 //       size_t num_depths = std::min(length / sizeof(int), static_cast<size_t>(100));
 //       int center_coordinates[num_depths];
 //       std::memcpy(center_coordinates, msg_recv->int_data, num_depths * sizeof(int));
@@ -161,15 +164,14 @@ void parse_received_msg(received_msg* msg_recv, int length)
     }
 
 }
-void send_depth_data(array_packet center_coordinates)
+void send_depth_data(array_packet * center_coordinates)
 {
-    result_vector = get_depth_from_coordinates(center_coordinates);
-
+    int * result_array  = get_depth_from_coordinates(center_coordinates);
     struct frame_t frame;
-    memset(frame, 0, sizeof(frame));
+    memset(&frame, 0, sizeof(frame));
     frame.type = TYPE::command;
     frame.length = sizeof(center_coordinates);
-    frame.data = center_coordinates.data;
+    memcpy(frame.data.int_data, result_array, center_coordinates->len);
     sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
     std::this_thread::sleep_for(std::chrono::milliseconds(2));
 
@@ -217,7 +219,7 @@ void send_image_file(int type)
         }
         frame.type = TYPE::image;
         frame.id = i;
-        frame.length = fread(frame.data, 1, BUF_SIZE, fptr);
+        frame.length = fread(frame.data.char_data, 1, BUF_SIZE, fptr);
         sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
@@ -280,7 +282,7 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
     csv.close();
 }
 
-int * get_depth_from_coordinates(array_packet center_coordinates){
+int * get_depth_from_coordinates(array_packet * center_coordinates){
     int * coordinate_list = center_coordinates->data;
     size_t list_len = center_coordinates->len;
     // std::vector<float> depth_results;
@@ -298,7 +300,7 @@ int * get_depth_from_coordinates(array_packet center_coordinates){
        // Query the distance from the camera to the object in the center of the image
        x_coor = coordinate_list[i];
        y_coor = coordinate_list[i+1];
-       coordinate_list[i][i+2] = depth.get_distance(x_coor,y_coor);
+coordinate_list[i+2] = depth.get_distance(x_coor,y_coor);
 
        // Print the distance
 //       std::cout << "The camera is facing an object " << dist_to_center << " meters away \r";

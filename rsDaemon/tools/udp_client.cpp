@@ -58,7 +58,7 @@ void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
     frame_t* frame = (frame_t*)(msg);
     if( frame->type == TYPE::image) {
         if(frame->ind == INDICATION::stop) {
-            c(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+            fwrite(frame->data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
             fclose(fptr);
             std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
         }
