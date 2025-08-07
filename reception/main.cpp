@@ -361,7 +361,7 @@ void yolo_image_inference (const std::string& imageFileName){
     uint32_t end = end_ms.time_since_epoch().count();
     // Show the results
 
-    int * object_center_coordinates = new int[100];
+    int object_center_coordinates{3*keep.size(0)};
     std::cout << std::endl <<"Inference takes [ " << end-start << " ]ms,  results : [x1,y1,x2,y2], confidence level, class " << std::endl;
     for (int i = 0; i < keep.size(0); i++) {
         int x1 = keep[i][0].item().toFloat();
@@ -380,7 +380,8 @@ void yolo_image_inference (const std::string& imageFileName){
     }
     struct array_packet depth_req_packet;
     memset(&depth_req_packet, 0, sizeof(depth_req_packet));
-    depth_req_packet.data = object_center_coordinates;
+    memcpy(object_center_coordinates, &depth_req_packet.data,3*keep.size(0));
+#depth_req_packet.data = object_center_coordinates;
     depth_req_packet.len = 3*keep.size(0);
 
     client->depth_coordinates = depth_req_packet;

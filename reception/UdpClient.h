@@ -40,7 +40,7 @@ struct client_observer_t {
     std::function<void(const std::string & ret)> disconnectionHandler = nullptr;
 };
       struct array_packet {
-      	  int * data;
+      	  int data{MAX_PACKET_SIZE};
           size_t len;
       };
 class UdpClient

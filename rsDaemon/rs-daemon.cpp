@@ -43,7 +43,7 @@ enum class INDICATION {
 //    depth
 //};
 struct array_packet {
-  int * data;
+  int data{BUF_SIZE};
   size_t len;
 };
 
@@ -72,7 +72,7 @@ union received_msg {
 //    buffer buffer;
 //};
 
-received_msg * msg_recv = new received_msg;
+received_msg * msg_recv;
  // Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
 
@@ -283,7 +283,9 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 }
 
 int * get_depth_from_coordinates(array_packet * center_coordinates){
-    int * coordinate_list = center_coordinates->data;
+    int * coordinate_list = new int[center_coordinates->len];
+    memcpy(coordinate_list, center_coordinates->data, center_coordinates->len* sizeof(int));	
+//int * coordinate_list = center_coordinates->data;
     size_t list_len = center_coordinates->len;
     // std::vector<float> depth_results;
     // Block program until frames arrive
