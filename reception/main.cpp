@@ -361,7 +361,8 @@ void yolo_image_inference (const std::string& imageFileName){
     uint32_t end = end_ms.time_since_epoch().count();
     // Show the results
 
-    int object_center_coordinates{3*keep.size(0)};
+    int size = static_cast<int>(3 * keep.size(0));
+int* object_center_coordinates = new int[size];
     std::cout << std::endl <<"Inference takes [ " << end-start << " ]ms,  results : [x1,y1,x2,y2], confidence level, class " << std::endl;
     for (int i = 0; i < keep.size(0); i++) {
         int x1 = keep[i][0].item().toFloat();
@@ -374,17 +375,21 @@ void yolo_image_inference (const std::string& imageFileName){
         int cls = keep[i][5].item().toInt();
         std::cout << "  Rect: [" << x1 << "," << y1 << "," << x2 << "," << y2 << "], Center: [" <<c1/2 <<","<< c2/2  <<"]  Conf: " << conf
                   << "  Class: " << classes[cls] << std::endl;
-        object_center_coordinates[3*i] = c1;
-        object_center_coordinates[3*i+1] = c2;
+        object_center_coordinates[3*i] = c1/2;
+        object_center_coordinates[3*i+1] = c2/2;
         object_center_coordinates[3*i+2] = -1;
     }
+    for (size_t i=0; i < 3*size; i++){
+   	std::cout << "object_center_coordinates" << object_center_coordinates[i] << std::endl;
+    }
+    //struct array_packet * depth_req_packet = static_cast<array_packet>(sizeof(array_packet));
     struct array_packet depth_req_packet;
     memset(&depth_req_packet, 0, sizeof(depth_req_packet));
-    memcpy(object_center_coordinates, &depth_req_packet.data,3*keep.size(0));
+    memcpy(object_center_coordinates, &depth_req_packet.data,size);
 //depth_req_packet.data = object_center_coordinates;
-    depth_req_packet.len = 3*keep.size(0);
-
-    client->depth_coordinates = depth_req_packet;
+    client->depth_coordinates.len = size;
+    memcpy(&depth_req_packet.data, &client->depth_coordinates.data,size);
+    //client->depth_coordinates = depth_req_packet;
     client->sendDepthReq();
 
 }

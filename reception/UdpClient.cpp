@@ -69,7 +69,7 @@ void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 //    else{
         frame_t* frame = (frame_t*)(msg);
         if (frame->type == TYPE::command) {
-            std::cout << frame->data.char_data << std::endl;
+    		std::cout << "frame->data.int_data"<<frame->data.int_data << std::endl;
         }
 	else if( frame->type == TYPE::image) {
             if(frame->ind == INDICATION::stop) {
@@ -129,7 +129,7 @@ void UdpClient::sendMsg() {
 
 void UdpClient::sendDepthReq()
 {
-    std::cout<<depth_coordinates.data<<std::endl;
+    std::cout<< "depth_coordinates.data" <<depth_coordinates.data<<std::endl;
        if( sendto(_sockfd, &depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
        {
         std::cout << " failed to send data " << std::endl;

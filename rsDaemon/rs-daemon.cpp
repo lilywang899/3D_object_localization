@@ -71,8 +71,7 @@ union received_msg {
 //    MSG_TYPE type;
 //    buffer buffer;
 //};
-
-received_msg * msg_recv;
+received_msg * msg_recv=static_cast<received_msg*>(malloc(sizeof(received_msg)));
  // Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
 
@@ -172,6 +171,9 @@ void send_depth_data(array_packet * center_coordinates)
     frame.type = TYPE::command;
     frame.length = sizeof(center_coordinates);
     memcpy(frame.data.int_data, result_array, center_coordinates->len);
+        for (size_t i=0; i<frame.length; i++){
+      std::cout<<frame.data.int_data[i]<<std::endl;
+    }
     sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
     std::this_thread::sleep_for(std::chrono::milliseconds(2));
 
@@ -284,7 +286,7 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 
 int * get_depth_from_coordinates(array_packet * center_coordinates){
     int * coordinate_list = new int[center_coordinates->len];
-    memcpy(coordinate_list, center_coordinates->data, center_coordinates->len* sizeof(int));
+    memcpy(coordinate_list,&center_coordinates->data, center_coordinates->len* sizeof(int));
 //int * coordinate_list = center_coordinates->data;
     size_t list_len = center_coordinates->len;
     // std::vector<float> depth_results;
@@ -301,9 +303,11 @@ int * get_depth_from_coordinates(array_packet * center_coordinates){
     for (size_t i=0; i<list_len; i++){
        // Query the distance from the camera to the object in the center of the image
        x_coor = coordinate_list[i];
-       y_coor = coordinate_list[i+1];
-coordinate_list[i+2] = depth.get_distance(x_coor,y_coor);
-
+       y_coor = coordinate_list[i+1] * 0.75;
+       std::cout << "x_coor, y_coor: " << x_coor << ", " <<y_coor << std::endl;
+//coordinate_list[i+2] = depth.get_distance(x_coor,y_coor);
+coordinate_list[i+2] = depth.get_distance(138,178);
+       std::cout << "coordinate_list[i+2]" << coordinate_list[i+2] << std::endl;
        // Print the distance
 //       std::cout << "The camera is facing an object " << dist_to_center << " meters away \r";
     }
