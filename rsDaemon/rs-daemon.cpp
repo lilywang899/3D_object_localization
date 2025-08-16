@@ -43,7 +43,7 @@ enum class INDICATION {
 //    depth
 //};
 struct array_packet {
-  int data{BUF_SIZE};
+  int data[BUF_SIZE];
   size_t len;
 };
 
@@ -71,8 +71,9 @@ union received_msg {
 //    MSG_TYPE type;
 //    buffer buffer;
 //};
-received_msg * msg_recv=static_cast<received_msg*>(malloc(sizeof(received_msg)));
- // Declare RealSense pipeline, encapsulating the actual device and sensors
+//received_msg * msg_recv=static_cast<received_msg*>(malloc(sizeof(received_msg)));
+received_msg msg_recv;
+// Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
 
 //char msg_recv[BUF_SIZE];
@@ -88,7 +89,7 @@ int * get_depth_from_coordinates(array_packet * center_coordinates);
 void init_socket();
 void send_depth_data(array_packet * center_coordinates);
 void send_image_file(int type);
-void parse_received_msg(received_msg* msg_recv, int length);
+void parse_received_msg(const uint8_t *  msg, int length);
 
 int main(int argc, char * argv[]) 
 {
@@ -107,13 +108,13 @@ int main(int argc, char * argv[])
     while(!quit)
     {
         printf("Server: Waiting for client to connect\n");
-        memset(msg_recv, 0, sizeof(received_msg));
+        memset(&msg_recv, 0, sizeof(received_msg));
         ssize_t length = sizeof(cl_addr);
 
-        if((numRead = recvfrom(sfd, msg_recv, BUF_SIZE, 0, (struct sockaddr *) &cl_addr, (socklen_t *) &length)) != -1)
+        if((numRead = recvfrom(sfd, &msg_recv, BUF_SIZE, 0, (struct sockaddr *) &cl_addr, (socklen_t *) &length)) != -1)
         {
             //printf("Server: The received message ---> %s\n", msg_recv);
-            parse_received_msg(msg_recv, length);
+            parse_received_msg((uint8_t *)&msg_recv, length);
         }
         rs_pipe.wait_for_frames();
     }
@@ -139,18 +140,26 @@ void init_socket()
     bind(sfd, (struct sockaddr *) &sv_addr, sizeof(sv_addr));
 }
 
-void parse_received_msg(received_msg* msg_recv, int length)
+void parse_received_msg(const uint8_t * msg, int length)
 {
+    received_msg * msg_recv = (received_msg*)(msg);	
     if (strcmp(msg_recv->char_data, "Register to UDP server- D435i .") == 0){
+       std::cout << msg_recv->char_data << std::endl;
        memset(cmd_recv, 0, sizeof(cmd_recv));
        capture_color_frame();
        send_image_file(0);
     }
     else {
-       array_packet * depth_req = &msg_recv->int_data;
-//       memset(depth_req, 0, sizeof(depth_req));
-//       memcpy(depth_req, msg_recv->int_data, msg_recv->int_data.len);
-       send_depth_data(depth_req);
+       array_packet depth_req;
+       std::cout << "msg_recv->int_data.len" << msg_recv->int_data.len << std::endl;
+       memset(&depth_req, 0, sizeof(array_packet));
+       depth_req.len = msg_recv->int_data.len;	
+       memcpy(depth_req.data, msg_recv->int_data.data, depth_req.len);
+       std::cout << "depth_req->len: " << depth_req.len << std::endl;
+       for (size_t i=0; i<depth_req.len; i++){
+       	  std::cout << "depth_req->data, i: " << i << ", " << depth_req.data[i]<<std::endl;
+       }
+       send_depth_data(&depth_req);
 //       size_t num_depths = std::min(length / sizeof(int), static_cast<size_t>(100));
 //       int center_coordinates[num_depths];
 //       std::memcpy(center_coordinates, msg_recv->int_data, num_depths * sizeof(int));
@@ -166,10 +175,13 @@ void parse_received_msg(received_msg* msg_recv, int length)
 void send_depth_data(array_packet * center_coordinates)
 {
     int * result_array  = get_depth_from_coordinates(center_coordinates);
+        for (size_t i=0; i<center_coordinates->len; i++){
+      std::cout<<result_array[i]<<std::endl;
+    }
     struct frame_t frame;
     memset(&frame, 0, sizeof(frame));
     frame.type = TYPE::command;
-    frame.length = sizeof(center_coordinates);
+    frame.length = center_coordinates->len;
     memcpy(frame.data.int_data, result_array, center_coordinates->len);
         for (size_t i=0; i<frame.length; i++){
       std::cout<<frame.data.int_data[i]<<std::endl;
@@ -300,7 +312,8 @@ int * get_depth_from_coordinates(array_packet * center_coordinates){
     auto width = depth.get_width();
     auto height = depth.get_height();
     int x_coor, y_coor;
-    for (size_t i=0; i<list_len; i++){
+   // for (size_t i=0; i<list_len; i++){
+    for (size_t i=0; i<1; i++){
        // Query the distance from the camera to the object in the center of the image
        x_coor = coordinate_list[i];
        y_coor = coordinate_list[i+1] * 0.75;
