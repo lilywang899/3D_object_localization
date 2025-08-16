@@ -381,7 +381,7 @@ void yolo_image_inference (const std::string& imageFileName){
     struct array_packet depth_req_packet;
     memset(&depth_req_packet, 0, sizeof(depth_req_packet));
     memcpy(object_center_coordinates, &depth_req_packet.data,3*keep.size(0));
-#depth_req_packet.data = object_center_coordinates;
+//depth_req_packet.data = object_center_coordinates;
     depth_req_packet.len = 3*keep.size(0);
 
     client->depth_coordinates = depth_req_packet;

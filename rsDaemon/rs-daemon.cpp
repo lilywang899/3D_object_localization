@@ -284,7 +284,7 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 
 int * get_depth_from_coordinates(array_packet * center_coordinates){
     int * coordinate_list = new int[center_coordinates->len];
-    memcpy(coordinate_list, center_coordinates->data, center_coordinates->len* sizeof(int));	
+    memcpy(coordinate_list, center_coordinates->data, center_coordinates->len* sizeof(int));
 //int * coordinate_list = center_coordinates->data;
     size_t list_len = center_coordinates->len;
     // std::vector<float> depth_results;

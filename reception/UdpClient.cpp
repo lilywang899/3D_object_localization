@@ -127,7 +127,7 @@ void UdpClient::sendMsg() {
     }
 }
 
-void UdpClient::sendDepthReq() 
+void UdpClient::sendDepthReq()
 {
     std::cout<<depth_coordinates.data<<std::endl;
        if( sendto(_sockfd, &depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
