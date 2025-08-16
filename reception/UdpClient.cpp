@@ -132,10 +132,13 @@ void UdpClient::sendMsg() {
 
 void UdpClient::sendDepthReq()
 {
+	std::cout<< "depth_coordinates.len: " << depth_coordinates.len << std::endl;
 	for (size_t i=0; i<depth_coordinates.len; i++){
-   std::cout << "depth_coordinates.data, i: " << i << ", " << depth_coordinates.data[i] << std::endl;
-}
-       if( sendto(_sockfd, &depth_coordinates, sizeof(depth_coordinates), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
+	    	std::cout << "depth_coordinates.data, i: " << i << ", " << depth_coordinates.data[i] << std::endl;
+}    char cmd_send[]="Register to UDP server- D435isecond .";
+//if( sendto(_sockfd, cmd_send, sizeof(cmd_send), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
+
+      if( sendto(_sockfd, &(depth_coordinates), sizeof(array_packet), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
        {
         std::cout << " failed to send data " << std::endl;
     }

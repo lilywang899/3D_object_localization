@@ -148,18 +148,21 @@ void parse_received_msg(const uint8_t * msg, int length)
        memset(cmd_recv, 0, sizeof(cmd_recv));
        capture_color_frame();
        send_image_file(0);
+    }   else if (strcmp(msg_recv->char_data, "Register to UDP server- D435isecond .") == 0)
+    {
+	           std::cout << msg_recv->char_data << std::endl;
     }
     else {
-       array_packet depth_req;
-       std::cout << "msg_recv->int_data.len" << msg_recv->int_data.len << std::endl;
-       memset(&depth_req, 0, sizeof(array_packet));
-       depth_req.len = msg_recv->int_data.len;	
-       memcpy(depth_req.data, msg_recv->int_data.data, depth_req.len);
-       std::cout << "depth_req->len: " << depth_req.len << std::endl;
-       for (size_t i=0; i<depth_req.len; i++){
-       	  std::cout << "depth_req->data, i: " << i << ", " << depth_req.data[i]<<std::endl;
+       array_packet* depth_req=(array_packet*)(msg);
+       std::cout << "msg_recv->int_data.len" << depth_req->len << std::endl;
+       memset(depth_req, 0, sizeof(array_packet));
+       //depth_req.len = msg_recv->int_data.len;	
+       //memcpy(depth_req.data, msg_recv->int_data.data, depth_req.len);
+       //std::cout << "depth_req->len: " << depth_req.len << std::endl;
+       for (size_t i=0; i<depth_req->len; i++){
+       	  std::cout << "depth_req->data, i: " << i << ", " << depth_req->data[i]<<std::endl;
        }
-       send_depth_data(&depth_req);
+       send_depth_data(depth_req);
 //       size_t num_depths = std::min(length / sizeof(int), static_cast<size_t>(100));
 //       int center_coordinates[num_depths];
 //       std::memcpy(center_coordinates, msg_recv->int_data, num_depths * sizeof(int));
@@ -175,15 +178,18 @@ void parse_received_msg(const uint8_t * msg, int length)
 void send_depth_data(array_packet * center_coordinates)
 {
     int * result_array  = get_depth_from_coordinates(center_coordinates);
-        for (size_t i=0; i<center_coordinates->len; i++){
-      std::cout<<result_array[i]<<std::endl;
+        for (size_t i=0; i<1; i++){
+      std::cout<< "resut_array" <<result_array[i]<<std::endl;
     }
     struct frame_t frame;
     memset(&frame, 0, sizeof(frame));
     frame.type = TYPE::command;
-    frame.length = center_coordinates->len;
-    memcpy(frame.data.int_data, result_array, center_coordinates->len);
-        for (size_t i=0; i<frame.length; i++){
+       frame.length = sizeof(center_coordinates);
+
+    // frame.length = center_coordinates->len;
+ //   memcpy(frame.data.int_data, result_array, center_coordinates->len);
+     memcpy(frame.data.int_data, result_array, sizeof(frame));
+     for (size_t i=0; i<frame.length; i++){
       std::cout<<frame.data.int_data[i]<<std::endl;
     }
     sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
