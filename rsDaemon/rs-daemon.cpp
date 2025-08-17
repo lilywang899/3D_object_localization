@@ -38,12 +38,8 @@ enum class INDICATION {
     inProcess,
     stop
 };
-//enum class MSG_TYPE {
-//    frame,
-//    depth
-//};
 struct array_packet {
-  int data[6];
+  int * data;
   size_t len;
 };
 
@@ -62,16 +58,6 @@ union received_msg {
     array_packet int_data;
 };
 
-//union buffer {
-//    frame_t img_msg;
-//    int depth_list[100];
-//};
-
-//struct udp_packet {
-//    MSG_TYPE type;
-//    buffer buffer;
-//};
-//received_msg * msg_recv=static_cast<received_msg*>(malloc(sizeof(received_msg)));
 received_msg msg_recv;
 // Declare RealSense pipeline, encapsulating the actual device and sensors
  rs2::pipeline rs_pipe;
@@ -153,28 +139,15 @@ void parse_received_msg(const uint8_t * msg, int length)
 	           std::cout << msg_recv->char_data << std::endl;
     }
     else {
-      // array_packet* depth_req=(array_packet*)(msg);
-             array_packet* depth_req=(array_packet*)(&msg_recv->int_data);
+       array_packet* depth_req=(array_packet*)(&msg_recv->int_data);
        std::cout << "msg_recv->int_data.len" << depth_req->len << std::endl;
        memset(depth_req, 0, sizeof(array_packet));
-       //depth_req.len = msg_recv->int_data.len;	
-       //memcpy(depth_req.data, msg_recv->int_data.data, depth_req.len);
-       //std::cout << "depth_req->len: " << depth_req.len << std::endl;
+
        for (size_t i=0; i<depth_req->len; i++){
        	  std::cout << "depth_req->data, i: " << i << ", " << depth_req->data[i]<<std::endl;
        }
        send_depth_data(depth_req);
-//       size_t num_depths = std::min(length / sizeof(int), static_cast<size_t>(100));
-//       int center_coordinates[num_depths];
-//       std::memcpy(center_coordinates, msg_recv->int_data, num_depths * sizeof(int));
-//       size_t array_length = sizeof(center_coordinates)/sizeof(center_coordinates[0]);
-//       for (size_t i=0; i<array_length;i+=3){
-//           if (center_coordinates[i] != -1){
-//               get_depth_from_coordinates(i,i+1);
-//           }
-//       }
     }
-
 }
 void send_depth_data(array_packet * center_coordinates)
 {
@@ -185,12 +158,9 @@ void send_depth_data(array_packet * center_coordinates)
     struct frame_t frame;
     memset(&frame, 0, sizeof(frame));
     frame.type = TYPE::command;
-       frame.length = sizeof(center_coordinates);
-
-    // frame.length = center_coordinates->len;
- //   memcpy(frame.data.int_data, result_array, center_coordinates->len);
-     memcpy(frame.data.int_data, result_array, sizeof(frame));
-     for (size_t i=0; i<frame.length; i++){
+    frame.length = sizeof(center_coordinates);
+    memcpy(frame.data.int_data, result_array, sizeof(frame));
+    for (size_t i=0; i<frame.length; i++){
       std::cout<<frame.data.int_data[i]<<std::endl;
     }
     sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
@@ -229,7 +199,7 @@ void send_image_file(int type)
     for (int i = 0; i <= total_frame; i++) {
         memset(&frame, 0, sizeof(frame));
         if(i == 0) {
-                frame.ind = INDICATION::start;
+            frame.ind = INDICATION::start;
         }
         else if( i == (total_frame -1) )  // last frame;
         {
@@ -306,9 +276,7 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 int * get_depth_from_coordinates(array_packet * center_coordinates){
     int * coordinate_list = new int[center_coordinates->len];
     memcpy(coordinate_list,&center_coordinates->data, center_coordinates->len* sizeof(int));
-//int * coordinate_list = center_coordinates->data;
     size_t list_len = center_coordinates->len;
-    // std::vector<float> depth_results;
     // Block program until frames arrive
     rs2::frameset frames = rs_pipe.wait_for_frames();
 
@@ -319,17 +287,14 @@ int * get_depth_from_coordinates(array_packet * center_coordinates){
     auto width = depth.get_width();
     auto height = depth.get_height();
     int x_coor, y_coor;
-   // for (size_t i=0; i<list_len; i++){
-    for (size_t i=0; i<1; i++){
+    for (size_t i=0; i<list_len; i++){
        // Query the distance from the camera to the object in the center of the image
-       x_coor = coordinate_list[i];
-       y_coor = coordinate_list[i+1] * 0.75;
+       x_coor = coordinate_list[3*i];
+       y_coor = coordinate_list[3*i+1] * 0.75;
        std::cout << "x_coor, y_coor: " << x_coor << ", " <<y_coor << std::endl;
-//coordinate_list[i+2] = depth.get_distance(x_coor,y_coor);
-coordinate_list[i+2] = depth.get_distance(138,178);
-       std::cout << "coordinate_list[i+2]" << coordinate_list[i+2] << std::endl;
+	   coordinate_list[3*i+2] = depth.get_distance(x_coor,y_coor);
        // Print the distance
-//       std::cout << "The camera is facing an object " << dist_to_center << " meters away \r";
+       std::cout << "The camera is facing an object " << coordinate_list[3*i+2] << " meters away \r";
     }
     return coordinate_list;
 }

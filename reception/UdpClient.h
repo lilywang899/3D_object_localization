@@ -40,7 +40,7 @@ struct client_observer_t {
     std::function<void(const std::string & ret)> disconnectionHandler = nullptr;
 };
       struct array_packet {
-      	  int data[6];
+      	  int * data;
           size_t len;
       };
 class UdpClient
@@ -78,14 +78,7 @@ private:
         inProcess,
         stop
     };
-//    enum class MSG_TYPE {
-//        frame,
-//        depth
-//    };
-//    union buffer {
-//        frame_t img_msg;
-//        int depth_list[100];
-//    };
+
     struct frame_t {
         TYPE type;
         INDICATION ind;
@@ -97,14 +90,6 @@ private:
         }data;
     };
     void dataPackageProcess(const uint8_t * msg, size_t msgSize);
-
-//    struct udp_packet {
-//        MSG_TYPE type;
-//        buffer buffer;
-//    };
-
-
-
 
 public:
     UdpClient();
@@ -119,7 +104,6 @@ public:
     * @param[in] dataSize  the size of the data to send (0-8 bytes)
     * @param[out] status    Error status variable. 0 on success.
     */
-//    void sendMsg(CANFrameId frameId, const uint8_t* data, uint8_t dataSize, int32_t* status);
     void sendMsg();
 
     void subscribe(const client_observer_t & observer);

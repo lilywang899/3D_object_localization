@@ -56,37 +56,24 @@ void UdpClient::subscribe(const client_observer_t & observer) {
 
 void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
 {
-//if (msgSize % sizeof(int) == 0){
-//    size_t num_depths = std::min(msgSize / sizeof(int), static_cast<size_t>(100));
-//    int depth_array[num_depths] = {0}; // Initialize to zero
-//    std::memcpy(depth_array, msg, num_depths * sizeof(int));
-//
-//    // Print all received values
-//    for (size_t i = 0; i < num_depths; ++i) {
-//        std::cout << i << ". " << depth_array[i] << std::endl;
-//    }
-//}
-//    else{
-        frame_t* frame = (frame_t*)(msg);
-        if (frame->type == TYPE::command) {
-	   for (size_t i=0; i<frame->length; i++){
-	       
-    		std::cout << "frame->data.int_data: "<< i << ", "<<frame->data.int_data[i] << std::endl;
-	   }
+    frame_t* frame = (frame_t*)(msg);
+    if (frame->type == TYPE::command) {
+        for (size_t i=0; i<frame->length; i++){
+    	    std::cout << "frame->data.int_data: "<< i << ", "<<frame->data.int_data[i] << std::endl;
         }
-	else if( frame->type == TYPE::image) {
-            if(frame->ind == INDICATION::stop) {
-                fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
-                fclose(fptr);
-                publishServerMsg(imageFileName);
-                std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
-            }
-            else {
-                fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
-                std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
-            }
+    }
+	else if(frame->type == TYPE::image) {
+        if(frame->ind == INDICATION::stop) {
+            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+            fclose(fptr);
+            publishServerMsg(imageFileName);
+            std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
         }
-    //}
+        else {
+            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+            std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
+        }
+    }
 }
 /*
  * Publish incomingPacketHandler client message to observer.
@@ -172,7 +159,6 @@ void UdpClient::run() {
     struct epoll_event events[256];
     std::cout << "UdpClient::receiveTask is running. " << std::endl;
 
-//    while (_isConnected )
     while (1)
     {
         int ready = epoll_wait(epfd, events, 256, -1);
