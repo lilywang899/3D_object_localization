@@ -43,7 +43,7 @@ enum class INDICATION {
 //    depth
 //};
 struct array_packet {
-  int data[BUF_SIZE];
+  int data[6];
   size_t len;
 };
 
