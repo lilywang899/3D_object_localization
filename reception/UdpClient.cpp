@@ -138,7 +138,7 @@ void UdpClient::sendDepthReq()
 }    char cmd_send[]="Register to UDP server- D435isecond .";
 //if( sendto(_sockfd, cmd_send, sizeof(cmd_send), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
 
-      if( sendto(_sockfd, &(depth_coordinates), sizeof(array_packet), 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
+      if( sendto(_sockfd, &(depth_coordinates), 64, 0, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
        {
         std::cout << " failed to send data " << std::endl;
     }

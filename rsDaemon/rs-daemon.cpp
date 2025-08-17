@@ -153,7 +153,8 @@ void parse_received_msg(const uint8_t * msg, int length)
 	           std::cout << msg_recv->char_data << std::endl;
     }
     else {
-       array_packet* depth_req=(array_packet*)(msg);
+      // array_packet* depth_req=(array_packet*)(msg);
+             array_packet* depth_req=(array_packet*)(&msg_recv->int_data);
        std::cout << "msg_recv->int_data.len" << depth_req->len << std::endl;
        memset(depth_req, 0, sizeof(array_packet));
        //depth_req.len = msg_recv->int_data.len;	
