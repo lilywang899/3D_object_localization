@@ -9,7 +9,7 @@ FILE *fptr;
 UdpClient::UdpClient() {
     _isConnected = false;
     _isClosed = true;
-    imageFileName = "/home/lily/perception/reception/recevied.jpg";
+    imageFileName = "/home/lily/perception/reception/received.jpg";
 }
 
 UdpClient::~UdpClient() {
@@ -64,13 +64,13 @@ void UdpClient::dataPackageProcess(const uint8_t * msg, size_t msgSize )
     }
 	else if(frame->type == TYPE::image) {
         if(frame->ind == INDICATION::stop) {
-            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the received data to the file*/
             fclose(fptr);
             publishServerMsg(imageFileName);
             std::cout <<"UdpClient::receiveDataProcess, last frame, file is closed." << std::endl;
         }
         else {
-            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the recieved data to the file*/
+            fwrite(frame->data.char_data, 1, frame->length, fptr);   /*Write the received data to the file*/
             std::cout <<"frame.ID --->" <<frame->id <<"  frame.length --->"<< frame->length << std::endl;
         }
     }

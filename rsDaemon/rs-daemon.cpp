@@ -134,9 +134,6 @@ void parse_received_msg(const uint8_t * msg, int length)
        memset(cmd_recv, 0, sizeof(cmd_recv));
        capture_color_frame();
        send_image_file(0);
-    }   else if (strcmp(msg_recv->char_data, "Register to UDP server- D435isecond .") == 0)
-    {
-	           std::cout << msg_recv->char_data << std::endl;
     }
     else {
        array_packet* depth_req=(array_packet*)(&msg_recv->int_data);
@@ -238,7 +235,7 @@ void capture_color_frame()
 
 	        if( stream_name == "Color" )
 	        {
-    	         png_file << "rs-damon-output-" << stream_name << ".png";
+    	         png_file << "rs-daemon-output-" << stream_name << ".png";
     	         stbi_write_png(png_file.str().c_str(), vf.get_width(), vf.get_height(), vf.get_bytes_per_pixel(), vf.get_data(), vf.get_stride_in_bytes());
 
 	             std::cout << "Saved " << png_file.str()  << ", frame width: " << vf.get_width() << ", height: " << vf.get_height() << std::endl;

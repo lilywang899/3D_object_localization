@@ -384,6 +384,7 @@ int* object_center_coordinates = new int[size];
     }
     memset(&client->depth_coordinates, 0, sizeof(array_packet));
     client->depth_coordinates.len = size;
+    client->depth_coordinates.data = new int[size];
     memcpy(client->depth_coordinates.data, object_center_coordinates, 3*size+1);
     client->sendDepthReq();
 }
