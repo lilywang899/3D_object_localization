@@ -100,7 +100,7 @@ int main(int argc, char * argv[])
         if((numRead = recvfrom(sfd, &msg_recv, BUF_SIZE, 0, (struct sockaddr *) &cl_addr, (socklen_t *) &length)) != -1)
         {
             //printf("Server: The received message ---> %s\n", msg_recv);
-            parse_received_msg((uint8_t *)&msg_recv, length);
+            parse_received_msg((uint8_t *)&msg_recv, numRead);
         }
         rs_pipe.wait_for_frames();
     }
@@ -136,10 +136,13 @@ void parse_received_msg(const uint8_t * msg, int length)
        send_image_file(0);
     }
     else {
-       array_packet* depth_req=(array_packet*)(&msg_recv->int_data);
-       std::cout << "msg_recv->int_data.len" << depth_req->len << std::endl;
-       memset(depth_req, 0, sizeof(array_packet));
+       int * data= (int *)(msg);
+       array_packet * depth_req;
 
+       memset(depth_req, 0, sizeof(array_packet));
+	depth_req->len = length/sizeof(int);
+	depth_req->data = data;
+       std::cout << "msg_recv->int_data.len" << depth_req->len << std::endl;
        for (size_t i=0; i<depth_req->len; i++){
        	  std::cout << "depth_req->data, i: " << i << ", " << depth_req->data[i]<<std::endl;
        }
@@ -149,17 +152,13 @@ void parse_received_msg(const uint8_t * msg, int length)
 void send_depth_data(array_packet * center_coordinates)
 {
     int * result_array  = get_depth_from_coordinates(center_coordinates);
-        for (size_t i=0; i<1; i++){
-      std::cout<< "resut_array" <<result_array[i]<<std::endl;
-    }
+
     struct frame_t frame;
     memset(&frame, 0, sizeof(frame));
     frame.type = TYPE::command;
-    frame.length = sizeof(center_coordinates);
-    memcpy(frame.data.int_data, result_array, sizeof(frame));
-    for (size_t i=0; i<frame.length; i++){
-      std::cout<<frame.data.int_data[i]<<std::endl;
-    }
+    frame.length = center_coordinates->len;
+    memcpy(frame.data.int_data, result_array, center_coordinates->len*sizeof(int));
+
     sendto(sfd, &(frame), sizeof(frame), 0, (struct sockaddr *) &cl_addr,  sizeof(cl_addr));        //send the frame
     std::this_thread::sleep_for(std::chrono::milliseconds(2));
 
@@ -171,7 +170,7 @@ void send_image_file(int type)
 //    struct udp_packet udp_packet;
 //    udp_packet.type = MSG_TYPE::frame;
 //    udp_packet.buffer.img_msg = frame;
-    char flname_recv[] ="/home/lily/rsDaemon/build/rs-daemon-output-Color.png";
+    char flname_recv[] ="/home/lily/perception/rsDaemon/build/rs-daemon-output-Color.png";
 
     off_t f_size;
     FILE *fptr;
@@ -272,8 +271,9 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 
 int * get_depth_from_coordinates(array_packet * center_coordinates){
     int * coordinate_list = new int[center_coordinates->len];
-    memcpy(coordinate_list,&center_coordinates->data, center_coordinates->len* sizeof(int));
+    memcpy(coordinate_list,center_coordinates->data, center_coordinates->len* sizeof(int));
     size_t list_len = center_coordinates->len;
+
     // Block program until frames arrive
     rs2::frameset frames = rs_pipe.wait_for_frames();
 
@@ -284,14 +284,14 @@ int * get_depth_from_coordinates(array_packet * center_coordinates){
     auto width = depth.get_width();
     auto height = depth.get_height();
     int x_coor, y_coor;
-    for (size_t i=0; i<list_len; i++){
+    for (size_t i=0; i<list_len/3; i++){
        // Query the distance from the camera to the object in the center of the image
        x_coor = coordinate_list[3*i];
        y_coor = coordinate_list[3*i+1] * 0.75;
        std::cout << "x_coor, y_coor: " << x_coor << ", " <<y_coor << std::endl;
 	   coordinate_list[3*i+2] = depth.get_distance(x_coor,y_coor);
        // Print the distance
-       std::cout << "The camera is facing an object " << coordinate_list[3*i+2] << " meters away \r";
+       std::cout << "The camera is facing an object " << depth.get_distance(x_coor,y_coor) << " meters away"<<std::endl;
     }
     return coordinate_list;
 }

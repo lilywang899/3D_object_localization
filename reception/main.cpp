@@ -380,13 +380,14 @@ int* object_center_coordinates = new int[size];
         object_center_coordinates[3*i+2] = -1;
     }
     for (size_t i=0; i < size; i++){
-   		std::cout << "object_center_coordinates" << object_center_coordinates[i] << std::endl;
+   		std::cout << "object_center_coordinates" <<i <<", " <<object_center_coordinates[i] << std::endl;
     }
-    memset(&client->depth_coordinates, 0, sizeof(array_packet));
+    memset(&client->depth_coordinates, -3, sizeof(array_packet));
     client->depth_coordinates.len = size;
     client->depth_coordinates.data = new int[size];
-    memcpy(client->depth_coordinates.data, object_center_coordinates, 3*size+1);
-    client->sendDepthReq();
+    memset(client->depth_coordinates.data, 0, size*sizeof(int));
+    memcpy(client->depth_coordinates.data, object_center_coordinates, size*sizeof(int));
+     client->sendDepthReq();
 }
 
 void yolo_inference (const unsigned char*, long unsigned int) {
