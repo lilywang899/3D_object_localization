@@ -1,10 +1,10 @@
-- how reception works
-- how rs-daemon works
-- what tools and libraries used
-- currently working on?
-- training lego
-https://www.kaggle.com/datasets/ronanpickell/b100-lego-detection-dataset/data
-https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html
+<!-- - how reception works -->
+<!-- - how rs-daemon works -->
+<!-- - what tools and libraries used -->
+<!-- - currently working on? -->
+<!-- - training lego -->
+<!-- https://www.kaggle.com/datasets/ronanpickell/b100-lego-detection-dataset/data -->
+<!-- https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html -->
 
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
