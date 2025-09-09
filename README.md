@@ -73,7 +73,7 @@ Using an existing robotic arm and Intel RealSense D435i, the 3D object localizat
 1. RS-Daemon that interfaces with the camera, and
 2. reception application that processes data sent by RS-Daemon
 
-# Why are there two separate programs?
+### Why are there two separate programs?
 The goal of this project is to eventually run the reception application on a Raspberry Pi.
 This will be more efficient for running object detection with LibTorch as the rest of the robotic arm processes are also on RPi.
 
