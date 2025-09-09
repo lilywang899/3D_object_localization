@@ -31,12 +31,9 @@
 
 
 <!-- PROJECT LOGO -->
-<br />
 <div align="center">
-    <img src="images/camera.jpg">
-
-  <h3 align="center">3D Object Localization</h3>
-
+      <h2 align="center">3D Object Localization</h2>
+    <img src="images/camera.jpg" style="width:300px; height:auto;">
 </div>
 
 
