@@ -33,24 +33,10 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="images/camera.jpg">
-  </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">3D Object Localization</h3>
 
-  <p align="center">
-    An awesome README template to jumpstart your projects!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    &middot;
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    &middot;
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-  </p>
 </div>
 
 
@@ -87,7 +73,8 @@ Using an existing robotic arm and Intel RealSense D435i, the 3D object localizat
 1. RS-Daemon that interfaces with the camera, and
 2. reception application that processes data sent by RS-Daemon
 
-Why are there two separate programs? The goal of this project is to eventually run the reception application on a Raspberry Pi.
+# Why are there two separate programs?
+The goal of this project is to eventually run the reception application on a Raspberry Pi.
 This will be more efficient for running object detection with LibTorch as the rest of the robotic arm processes are also on RPi.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -122,7 +109,7 @@ to verify installation, run in terminal:
 rs-enumerate-devices
 ```
 
-### RS-Daemon
+## RS-Daemon
 main tasks of the program:
 1. capture image upon receiving connection confirmation message from reception application
 2. send image to reception application through UDP
@@ -132,12 +119,12 @@ areas of improvement:
 * send RGB and depth info entire image at the same time to increase efficiency
 * continuously check for image requests or send directly to reception application periodically
 
-## Testing tool
+### Testing tool
 There is a UDP client program under tools folder to test the RS-Daemon's UDP connection. The testing tool acts like the
 reception application by connecting to RS-Daemon and receiving the captured image, except it only saves the received image
 instead of processing it.
 
-## Static file paths
+### Static file paths
 The following static file paths need to be changed if the program was run in a different system:
 1. captured image location (rs-daemon.cpp, send_image_file())
 ```sh
@@ -151,7 +138,7 @@ match the file path where .exe file is located
     imageFileName = "/home/lily/work/rs-daemon/build/received.png";
 ```
 
-### Reception
+## Reception
 main tasks of the program:
 1. connect to RS-Daemon and send image capture request
 2. receive and save image from RS-Daemon through UDP
@@ -161,14 +148,14 @@ main tasks of the program:
 areas of improvement:
 * locate desired/specified object
 
-## Testing tool
+### Testing tool
 There is a UDP server program under tools folder to test the reception application's UDP connection.
 The testing tool acts like the RS-Daemon as it sends an image through UDP for reception to process.
 
 Additionally, you can also test the image inference function separately using yolo_image_inference_local()
 instead of yolo_image_inference()
 
-## Static file paths
+### Static file paths
 The following static file paths need to be changed if the program was run in a different system:
 1. yolo model location (main.cpp, send_image_file())
 ```sh
