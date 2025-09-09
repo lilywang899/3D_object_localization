@@ -265,12 +265,7 @@ void yolo_image_inference_local()
         try {
 
             // Load image and preprocess
-            //cv::Mat image = cv::imread("/home/gabriel_wang/tools/bus.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/tools/zidane.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000061.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000036.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/000000000042.jpg");
-            //cv::Mat image = cv::imread("/home/gabriel_wang/share/coco8-seg/images/val/test_049.jpg");
+            //example cv::Mat image = cv::imread("/home/lily/share/coco8-seg/images/val/000000000061.jpg");
 
             std::string filename;
             std::cin >> filename;
