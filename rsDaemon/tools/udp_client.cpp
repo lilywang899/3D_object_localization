@@ -8,7 +8,7 @@ FILE *fptr;
 UdpClient::UdpClient() {
     _isConnected = false;
     _isClosed = true;
-    imageFileName = "/home/gabriel/work/rs-daemon/build/received.png";
+    imageFileName = "/home/lily/work/rs-daemon/build/received.png";
 }
 
 UdpClient::~UdpClient() {

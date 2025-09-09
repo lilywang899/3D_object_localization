@@ -86,7 +86,7 @@ private:
         long int length;
         union data_union{
         char char_data[MAX_PACKET_SIZE];
-        int int_data[MAX_PACKET_SIZE];
+        float int_data[MAX_PACKET_SIZE];
         }data;
     };
     void dataPackageProcess(const uint8_t * msg, size_t msgSize);

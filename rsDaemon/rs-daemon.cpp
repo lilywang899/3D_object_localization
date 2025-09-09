@@ -50,7 +50,7 @@ struct frame_t {
     long int length;
     union data_union{
         char char_data[BUF_SIZE];
-        int int_data[BUF_SIZE];
+        float int_data[BUF_SIZE];
     }data;
 };
 union received_msg {
@@ -70,7 +70,7 @@ bool quit = false;
 
 void capture_color_frame();
 void metadata_to_csv(const rs2::frame& frm, const std::string& filename);
-int * get_depth_from_coordinates(array_packet * center_coordinates);
+float * get_depth_from_coordinates(array_packet * center_coordinates);
 
 void init_socket();
 void send_depth_data(array_packet * center_coordinates);
@@ -151,7 +151,7 @@ void parse_received_msg(const uint8_t * msg, int length)
 }
 void send_depth_data(array_packet * center_coordinates)
 {
-    int * result_array  = get_depth_from_coordinates(center_coordinates);
+    float * result_array  = get_depth_from_coordinates(center_coordinates);
 
     struct frame_t frame;
     memset(&frame, 0, sizeof(frame));
@@ -269,9 +269,11 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
     csv.close();
 }
 
-int * get_depth_from_coordinates(array_packet * center_coordinates){
-    int * coordinate_list = new int[center_coordinates->len];
-    memcpy(coordinate_list,center_coordinates->data, center_coordinates->len* sizeof(int));
+float * get_depth_from_coordinates(array_packet * center_coordinates){
+    float * coordinate_list = new float[center_coordinates->len];
+   for(int i = 0; i < center_coordinates->len; i++) {
+    coordinate_list[i] = (float)center_coordinates->data[i];  
+}
     size_t list_len = center_coordinates->len;
 
     // Block program until frames arrive
