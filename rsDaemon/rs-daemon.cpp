@@ -70,7 +70,7 @@ bool quit = false;
 
 void capture_color_frame();
 void metadata_to_csv(const rs2::frame& frm, const std::string& filename);
-int * get_depth_from_coordinates(array_packet * center_coordinates);
+float * get_depth_from_coordinates(array_packet * center_coordinates);
 
 void init_socket();
 void send_depth_data(array_packet * center_coordinates);
@@ -270,8 +270,10 @@ void metadata_to_csv(const rs2::frame& frm, const std::string& filename)
 }
 
 float * get_depth_from_coordinates(array_packet * center_coordinates){
-    float * coordinate_list = new int[center_coordinates->len];
-    memcpy(coordinate_list,center_coordinates->data, center_coordinates->len* sizeof(int));
+    float * coordinate_list = new float[center_coordinates->len];
+   for(int i = 0; i < center_coordinates->len; i++) {
+    coordinate_list[i] = (float)center_coordinates->data[i];  
+}
     size_t list_len = center_coordinates->len;
 
     // Block program until frames arrive
