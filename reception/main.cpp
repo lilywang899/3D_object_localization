@@ -26,14 +26,14 @@ using torch::indexing::None;
 
 torch::jit::script::Module yolo_model;
 // Note that in this example the classes are hard-coded
-std::vector<std::string> classes {"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant",
-                                  "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra",
-                                  "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
-                                  "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife",
-                                  "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair",
-                                  "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone",
-                                  "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"};
-
+//std::vector<std::string> classes {"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant",
+//                                  "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra",
+//                                  "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
+//                                  "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife",
+//                                  "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair",
+//                                  "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell phone",
+//                                  "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"};
+std::vector<std::string> classes {"lego-1x1-n-lightgreen", "lego-1x2-h-lightgreen", "lego-1x2-h-yellow","lego-1x3-h-darkgreen","lego-1x3-v-darkgreen","lego-1x4-h-darkgreen","lego-1x4-v-darkgreen","lego-2x2-n-blue","lego-2x2-n-orange","lego-2x2-n-red","lego-2x2-n-yellow","lego-2x3-h-orange","lego-2x4-h-blue","lego-2x4-v-blue","lego-2x6-v-blue"};
 torch::Device device(torch::cuda::is_available() ? torch::kCUDA :torch::kCPU);
 
 void yolo_inference (const unsigned char*, long unsigned int);
@@ -234,8 +234,9 @@ int main() {
     // Device
     // Load the model (e.g. yolov8s.torchscript)
     //std::string model_path = "/path/to/yolov8s.torchscript";
-    std::string model_path = "/home/lily/perception/reception/yolov8s.torchscript";
+    std::string model_path = "/home/lily/perception/reception/best.torchscript";
 
+    //std::string model_path = "/home/lily/perception/reception/yolov8s.torchscript";
     yolo_model = torch::jit::load(model_path, device);
     yolo_model.eval();
     yolo_model.to(device, torch::kFloat32);

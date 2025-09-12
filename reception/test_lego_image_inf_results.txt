@@ -1,0 +1,18 @@
+Inference takes [ 346 ]ms,  results : [x1,y1,x2,y2], confidence level, class
+  Rect: [414,153,479,249], Center: [223,100]  Conf: 0.893074  Class: lego-2x4-v-blue
+  Rect: [190,155,285,206], Center: [118,90]  Conf: 0.890522  Class: lego-2x3-h-orange
+  Rect: [107,517,139,540], Center: [61,264]  Conf: 0.866776  Class: lego-1x1-n-lightgreen
+  Rect: [392,439,519,462], Center: [227,225]  Conf: 0.85749  Class: lego-1x4-h-darkgreen
+  Rect: [192,228,225,252], Center: [104,120]  Conf: 0.852897  Class: lego-1x1-n-lightgreen
+  Rect: [349,129,381,152], Center: [182,70]  Conf: 0.842878  Class: lego-1x1-n-lightgreen
+  Rect: [62,159,127,206], Center: [47,91]  Conf: 0.830531  Class: lego-2x2-n-yellow
+  Rect: [100,302,166,444], Center: [66,186]  Conf: 0.814026  Class: lego-2x6-v-blue
+  Rect: [266,490,297,514], Center: [140,251]  Conf: 0.72536  Class: lego-1x1-n-lightgreen
+  Rect: [291,299,355,346], Center: [161,161]  Conf: 0.721318  Class: lego-2x2-n-red
+  Rect: [385,248,515,296], Center: [225,136]  Conf: 0.683759  Class: lego-2x4-h-blue
+  Rect: [483,365,518,437], Center: [250,200]  Conf: 0.645856  Class: lego-1x3-v-darkgreen
+  Rect: [229,346,293,395], Center: [130,185]  Conf: 0.637175  Class: lego-2x2-n-red
+  Rect: [227,299,291,348], Center: [129,161]  Conf: 0.595691  Class: lego-2x2-n-red
+  Rect: [231,442,263,467], Center: [123,227]  Conf: 0.554282  Class: lego-1x1-n-lightgreen
+  Rect: [292,346,357,393], Center: [162,184]  Conf: 0.444704  Class: lego-2x2-n-red
+

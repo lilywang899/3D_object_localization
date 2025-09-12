@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     struct timeval t_out = {0, 0};
 
     char msg_recv[BUF_SIZE];
-    char flname_recv[] ="/home/lily/perception/reception/tools/test_049.jpg" ;
+    char flname_recv[] ="/home/lily/perception/reception/tools/test_lego_image.jpg" ;
     char cmd_recv[10];
 
     ssize_t numRead;
