@@ -170,6 +170,10 @@ void send_image_file(int type)
 //    struct udp_packet udp_packet;
 //    udp_packet.type = MSG_TYPE::frame;
 //    udp_packet.buffer.img_msg = frame;
+//    
+//    test image to check lego model
+    //char flname_recv[] ="/home/lily/perception/rsDaemon/tools/test_lego_image.jpg";
+
     char flname_recv[] ="/home/lily/perception/rsDaemon/build/rs-daemon-output-Color.png";
 
     off_t f_size;
